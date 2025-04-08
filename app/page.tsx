@@ -12,7 +12,8 @@ export default function FuelCalculator() {
 
   const calcValues = (kg: number) => {
     const liters = kg / density;
-    const cm = (kg - 1200) / 100 + 17;
+    // a cada 1cm é == 50kg
+    const cm = kg / 50;
     return { liters: liters.toFixed(2), cm: cm.toFixed(1) };
   };
 
@@ -42,7 +43,7 @@ export default function FuelCalculator() {
               Litros: <strong>{valuesLeft.liters}</strong> L
             </p>
             <p className="text-sm">
-              Altura Régua: <strong>{valuesLeft.cm}</strong> cm
+              Régua: <strong>{valuesLeft.cm}</strong> cm
             </p>
           </div>
 

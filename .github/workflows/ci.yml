@@ -1,0 +1,22 @@
+name: "CI (Integração Contínua): Main Workflow"
+on:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: front-end
+      - name: Run Installation
+        run: yarn install
+        working-directory: /
+
+      - name: Run Lists Directory
+        run: ls -la
+
+      - name: Run Linter
+        run: yarn lint
+        working-directory: /
