@@ -12,8 +12,7 @@ export default function FuelCalculator() {
 
   const calcValues = (kg: number) => {
     const liters = kg / density;
-    // a cada 1cm é == 50kg
-    const cm = kg / 50;
+    const cm = kg / 50 - 7;
     return { liters: liters.toFixed(2), cm: cm.toFixed(1) };
   };
 
@@ -21,6 +20,7 @@ export default function FuelCalculator() {
   const valuesRight = calcValues(parseInput(kgRight));
   const totalKg = parseInput(kgLeft) + parseInput(kgRight);
   const totalLiters = totalKg / density;
+  const totalKgSaida = totalLiters * density;
 
   return (
     <main className="min-h-screen p-4 bg-gray-100 text-gray-800">
@@ -60,7 +60,7 @@ export default function FuelCalculator() {
               Litros: <strong>{valuesRight.liters}</strong> L
             </p>
             <p className="text-sm">
-              Altura Régua: <strong>{valuesRight.cm}</strong> cm
+              Régua: <strong>{valuesRight.cm}</strong> cm
             </p>
           </div>
         </div>
@@ -68,11 +68,14 @@ export default function FuelCalculator() {
         <div className="mt-6 border-t pt-4">
           <p className="font-semibold text-lg">Total</p>
           <p>
-            KG: <strong>{totalKg}</strong> kg
+            KG Entrada: <strong>{totalKg}</strong> kg
           </p>
           <p>
             Litros: <strong>{totalLiters.toFixed(2)}</strong> L
           </p>
+          {/* <p>
+            KG Saida: <strong>{totalKgSaida}</strong> kg
+          </p> */}
         </div>
       </div>
     </main>
