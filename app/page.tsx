@@ -20,7 +20,7 @@ export default function FuelCalculator() {
   const valuesRight = calcValues(parseInput(kgRight));
   const totalKg = parseInput(kgLeft) + parseInput(kgRight);
   const totalLiters = totalKg / density;
-  const totalKgSaida = totalLiters * density;
+  // const totalKgSaida = totalLiters * density;
 
   return (
     <main className="min-h-screen p-4 bg-gray-100 text-gray-800">
