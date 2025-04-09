@@ -94,7 +94,7 @@ export default function FuelCalculator() {
           <div className="grid grid-cols-1 gap-6">
             <div>
               <label className="block font-medium mb-1">
-                Litros na Chegada:
+                Kg na Chegada:
               </label>
               <input
                 type="text"
@@ -107,7 +107,7 @@ export default function FuelCalculator() {
 
             <div>
               <label className="block font-medium mb-1">
-                Litros para Saída:
+                Kg para Saída:
               </label>
               <input
                 type="text"
