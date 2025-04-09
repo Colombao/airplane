@@ -28,8 +28,6 @@ export default function FuelCalculator() {
   const departure = parseInput(departureLiters);
   const fuelToAddLiters = (departure - arrival) / density;
   const fuelToAddKg = calcKg(fuelToAddLiters);
-  const totalKg = parseInput(kgLeft) + parseInput(kgRight);
-  const totalLiters = totalKg / density;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(refuelNote);
@@ -107,6 +105,7 @@ export default function FuelCalculator() {
                 const value = e.target.value / 2;
                 setKgLeft(value);
                 setKgRight(value);
+                setKgTotal(e.target.value);
               }}
               placeholder="Ex: 2800"
               className="w-full border p-2 rounded-md mx-2"
@@ -152,10 +151,10 @@ export default function FuelCalculator() {
         <div className="mt-6 border-t pt-4">
           <p className="font-semibold text-lg">Total</p>
           <p>
-            KG Entrada: <strong>{totalKg}</strong> kg
+            KG Entrada: <strong>{kgTotal}</strong> kg
           </p>
           <p>
-            Litros: <strong>{totalLiters.toFixed(2)}</strong> L
+            Litros: <strong>{kgTotal / density}</strong> L
           </p>
         </div>
 
