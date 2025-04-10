@@ -1,7 +1,9 @@
 // app/page.tsx
 "use client";
 
+import axios from "axios";
 import { useEffect, useState } from "react";
+import WeatherInfoPanel from "./components/WeatherInfoPanel";
 
 export default function FuelCalculator() {
   const [arrivalLiters, setArrivalLiters] = useState("");
@@ -12,6 +14,36 @@ export default function FuelCalculator() {
   const [valuesLeft, setValuesLeft] = useState<any>(0);
   const [valuesRight, setValuesRight] = useState<any>(0);
   const density = 0.8;
+
+  const [weather, setWeather] = useState<{
+    temperature: number;
+    pressure: number;
+  } | null>(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const res = await axios.get(
+            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&pressure_unit=hPa`
+          );
+
+          const current = res.data.current_weather;
+          setWeather({
+            temperature: current.temperature,
+            pressure: current.pressure || 1013, // fallback
+          });
+        } catch (err) {
+          console.error("Erro ao buscar dados do clima", err);
+        }
+      },
+      (err) => {
+        console.error("Erro ao obter localização", err);
+      }
+    );
+  }, []);
 
   const parseInput = (val: any) =>
     typeof val === "string" ? parseFloat(val.replace(",", ".")) || 0 : 0;
@@ -126,8 +158,16 @@ export default function FuelCalculator() {
               Litros: <strong>{valuesLeft.liters}</strong> L
             </p>
             <p className="text-sm">
-              Régua: <strong>{valuesLeft.cm}</strong> cm
+              Régua 01: <strong>{valuesLeft.cm}</strong> cm
             </p>
+            <div className="flex items-center gap-2 text-sm">
+              <label className="font-medium">Régua 2:</label>
+              <input
+                type="text"
+                placeholder="0,0"
+                className="p-1 w-32 text-sm border-b"
+              />
+            </div>
           </div>
 
           <div>
@@ -143,19 +183,50 @@ export default function FuelCalculator() {
               Litros: <strong>{valuesRight.liters}</strong> L
             </p>
             <p className="text-sm">
-              Régua: <strong>{valuesRight.cm}</strong> cm
+              Régua 01: <strong>{valuesRight.cm}</strong> cm
             </p>
+            <div className="flex items-center gap-2 text-sm">
+              <label className="font-medium">Régua 2:</label>
+              <input
+                type="number"
+                placeholder="0,0"
+                className="p-1 w-32 text-sm border-b"
+              />
+            </div>
           </div>
         </div>
-
-        <div className="mt-6 border-t pt-4">
-          <p className="font-semibold text-lg">Total</p>
-          <p>
-            KG Entrada: <strong>{kgTotal}</strong> kg
-          </p>
-          <p>
-            Litros: <strong>{kgTotal / density}</strong> L
-          </p>
+        <div className="grid grid-cols-1 gap-6 mt-6 border-t pt-4  md:grid-cols-2">
+          <div>
+            <p className="font-semibold text-lg mb-2">Total</p>
+            <p>
+              KG: <strong>{kgTotal}</strong> kg
+            </p>
+            <p>
+              Litros: <strong>{(kgTotal / density).toFixed(2)}</strong> L
+            </p>
+          </div>
+          <div className="space-y-3 text-sm border-t md:border-t-0">
+            <div className="flex items-center gap-2">
+              <label className="w-20 font-medium">Nome:</label>
+              <input type="text" className="flex-1 p-1 border-b outline-none" />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="w-20 font-medium">CANAC:</label>
+              <input type="text" className="flex-1 p-1 border-b outline-none" />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="w-20 font-medium">Data:</label>
+              <input type="date" className="flex-1 p-1 border-b outline-none" />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="w-20 font-medium">Base:</label>
+              <input type="text" className="flex-1 p-1 border-b outline-none" />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="w-20 font-medium">Prefixo:</label>
+              <input type="text" className="flex-1 p-1 border-b outline-none" />
+            </div>
+          </div>
         </div>
 
         <div className="mt-8 p-4 border rounded-md bg-gray-50">
@@ -171,6 +242,10 @@ export default function FuelCalculator() {
           </button>
         </div>
       </div>
+      <WeatherInfoPanel
+        temp={weather?.temperature ?? 0}
+        pressure={weather?.pressure ?? 0}
+      />
     </main>
   );
 }
