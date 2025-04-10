@@ -129,7 +129,7 @@ export default function FuelCalculator() {
         </div>
         <div className="flex justify-center items-center mb-4">
           <div>
-            <label className="block font-medium mb-1">Total Asas:</label>
+            <label className="block font-medium mb-1">Total Asas (KG):</label>
             <input
               type="number"
               value={kgTotal}
