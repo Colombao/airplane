@@ -14,6 +14,14 @@ export default function FuelCalculator() {
   const [valuesRight, setValuesRight] = useState<any>(0);
   const [currentTime, setCurrentTime] = useState("");
 
+  const [nome, setNome] = useState("");
+  const [canac, setCanac] = useState("");
+  const [data, setData] = useState("");
+  const [base, setBase] = useState("");
+  const [prefixo, setPrefixo] = useState("");
+
+  const [leituraReguas, setLeituraReguas] = useState("");
+
   const density = 0.8;
 
   const [weather, setWeather] = useState<{
@@ -91,6 +99,18 @@ export default function FuelCalculator() {
     fuelToAddLiters: number;
     temperature: number;
     pressure: number;
+    refuelNote: string;
+    currentTime: string;
+    regua01Left: string;
+    regua02Left: string;
+    regua01Right: string;
+    regua02Right: string;
+    leituraReguas: string;
+    nome: string;
+    canac: string;
+    data: string;
+    base: string;
+    prefixo: string;
   }) => {
     const res = await fetch("/api/pdf", {
       method: "POST",
@@ -255,6 +275,7 @@ export default function FuelCalculator() {
                 <input
                   type="radio"
                   name="regua"
+                  onChange={(e) => setLeituraReguas("Esquerda")}
                   value="LH"
                   className="accent-blue-600"
                 />
@@ -264,6 +285,7 @@ export default function FuelCalculator() {
                 <input
                   type="radio"
                   name="regua"
+                  onChange={(e) => setLeituraReguas("Direita")}
                   value="RH"
                   className="accent-blue-600"
                 />
@@ -272,6 +294,7 @@ export default function FuelCalculator() {
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
+                  onChange={(e) => setLeituraReguas("Ambas")}
                   name="regua"
                   value="AMBAS"
                   className="accent-blue-600"
@@ -283,23 +306,48 @@ export default function FuelCalculator() {
           <div className="space-y-3 text-sm border-t md:border-t-0">
             <div className="flex items-center gap-2">
               <label className="w-20 font-medium">Nome:</label>
-              <input type="text" className="flex-1 p-1 border-b outline-none" />
+              <input
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                className="flex-1 p-1 border-b outline-none"
+              />
             </div>
             <div className="flex items-center gap-2">
               <label className="w-20 font-medium">CANAC:</label>
-              <input type="text" className="flex-1 p-1 border-b outline-none" />
+              <input
+                type="text"
+                value={canac}
+                onChange={(e) => setCanac(e.target.value)}
+                className="flex-1 p-1 border-b outline-none"
+              />
             </div>
             <div className="flex items-center gap-2">
               <label className="w-20 font-medium">Data:</label>
-              <input type="date" className="flex-1 p-1 border-b outline-none" />
+              <input
+                type="date"
+                value={data}
+                onChange={(e) => setData(e.target.value)}
+                className="flex-1 p-1 border-b outline-none"
+              />
             </div>
             <div className="flex items-center gap-2">
               <label className="w-20 font-medium">Base:</label>
-              <input type="text" className="flex-1 p-1 border-b outline-none" />
+              <input
+                type="text"
+                value={base}
+                onChange={(e) => setBase(e.target.value)}
+                className="flex-1 p-1 border-b outline-none"
+              />
             </div>
             <div className="flex items-center gap-2">
               <label className="w-20 font-medium">Prefixo:</label>
-              <input type="text" className="flex-1 p-1 border-b outline-none" />
+              <input
+                type="text"
+                value={prefixo}
+                onChange={(e) => setPrefixo(e.target.value)}
+                className="flex-1 p-1 border-b outline-none"
+              />
             </div>
           </div>
         </div>
@@ -320,6 +368,18 @@ export default function FuelCalculator() {
                   fuelToAddLiters,
                   temperature: weather?.temperature || 0,
                   pressure: weather?.pressure || 0,
+                  refuelNote,
+                  currentTime,
+                  regua01Left: valuesLeft.cm,
+                  regua02Left: "0,0",
+                  regua01Right: valuesRight.cm,
+                  regua02Right: "0,0",
+                  leituraReguas,
+                  nome,
+                  canac,
+                  data,
+                  base,
+                  prefixo,
                 })
               }
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"

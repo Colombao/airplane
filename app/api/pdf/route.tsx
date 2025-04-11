@@ -8,6 +8,18 @@ export async function POST(req: Request) {
 
   const element = (
     <ReportPDF
+      nome={body.nome}
+      canac={body.canac}
+      data={body.data}
+      base={body.base}
+      prefixo={body.prefixo}
+      currentTime={body.currentTime}
+      regua01Left={body.regua01Left}
+      regua02Left={body.regua02Left}
+      regua01Right={body.regua01Right}
+      regua02Right={body.regua02Right}
+      leituraReguas={body.leituraReguas}
+      refuelNote={body.refuelNote}
       kgTotal={body.kgTotal}
       fuelToAddKg={body.fuelToAddKg}
       fuelToAddLiters={body.fuelToAddLiters}
