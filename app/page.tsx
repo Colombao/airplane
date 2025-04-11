@@ -3,7 +3,6 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import WeatherInfoPanel from "./components/WeatherInfoPanel";
 
 export default function FuelCalculator() {
   const [arrivalLiters, setArrivalLiters] = useState("");
@@ -13,6 +12,8 @@ export default function FuelCalculator() {
   const [kgTotal, setKgTotal] = useState<any>(0);
   const [valuesLeft, setValuesLeft] = useState<any>(0);
   const [valuesRight, setValuesRight] = useState<any>(0);
+  const [currentTime, setCurrentTime] = useState("");
+
   const density = 0.8;
 
   const [weather, setWeather] = useState<{
@@ -45,6 +46,20 @@ export default function FuelCalculator() {
     );
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Intl.DateTimeFormat("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZone: "America/Sao_Paulo",
+      }).format(new Date());
+      setCurrentTime(now);
+    }, 1000);
+
+    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+  }, []);
+
   const parseInput = (val: any) =>
     typeof val === "string" ? parseFloat(val.replace(",", ".")) || 0 : 0;
 
@@ -61,10 +76,6 @@ export default function FuelCalculator() {
   const fuelToAddLiters = (departure - arrival) / density;
   const fuelToAddKg = calcKg(fuelToAddLiters);
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(refuelNote);
-  };
-
   const refuelNote = `PERFORMED MANUAL REFUELING IAW AMM\nMP ATR-A-12-11-28-00001-211C-A CHECK OF FUEL LEVEL USING MANUAL\nINDICATORS IAW AM MP ATR- A-12-11-28-00001-310A-A AND FUNCTIONAL\nTEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV 10 jan-01-2025 MANUAL CHECK IN NORMAL INDICATION, TEST OK`;
 
   useEffect(() => {
@@ -74,9 +85,35 @@ export default function FuelCalculator() {
     setValuesRight(calcValues(kgTotal / 2));
   }, [kgTotal]);
 
+  const downloadServerPDF = async (data: {
+    kgTotal: number;
+    fuelToAddKg: number;
+    fuelToAddLiters: number;
+    temperature: number;
+    pressure: number;
+  }) => {
+    const res = await fetch("/api/pdf", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "relatorio.pdf";
+    link.click();
+    link.remove();
+  };
+
   return (
-    <main className="min-h-screen p-4 bg-gray-100 text-gray-800">
-      <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-md">
+    <main className="min-h-screen p-4 bg-gray-100 text-gray-800 bg-cover bg-center">
+      {" "}
+      <div className="max-w-2xl mx-auto  p-6 rounded-2xl shadow-md">
         <div className="">
           <h2 className="text-xl font-bold mb-4">Cálculo de Reabastecimento</h2>
           <div className="grid grid-cols-1 gap-6">
@@ -105,21 +142,29 @@ export default function FuelCalculator() {
               />
             </div>
           </div>
-
-          <div className="mt-6 border-t pt-4">
-            <p className="font-semibold text-lg">Resultado</p>
-            <p>
-              Litros a Abastecer:{" "}
-              <strong>
-                {departure && arrival && fuelToAddLiters.toFixed(2)}
-              </strong>{" "}
-              L
-            </p>
-            <p>
-              Quilogramas a Abastecer:{" "}
-              <strong>{departure && arrival && fuelToAddKg.toFixed(2)}</strong>{" "}
-              kg
-            </p>
+          <div className="grid grid-cols-2 border-t mt-6">
+            <div className="mt-2 pt-4">
+              <p className="font-semibold text-lg">Resultado</p>
+              <p>
+                Litros a Abastecer:{" "}
+                <strong>
+                  {departure && arrival && fuelToAddLiters.toFixed(2)}
+                </strong>{" "}
+                L
+              </p>
+              <p>
+                Quilogramas a Abastecer:{" "}
+                <strong>
+                  {departure && arrival && fuelToAddKg.toFixed(2)}
+                </strong>{" "}
+                kg
+              </p>
+            </div>
+            <div className="mt-2 pt-4">
+              <p>Temp: {weather?.temperature} °C</p>
+              <p>Time: {currentTime}</p>
+              <p>Pressão: {weather?.pressure} hPa</p>
+            </div>
           </div>
         </div>
         <div className="mt-6 border-t pt-4">
@@ -140,7 +185,7 @@ export default function FuelCalculator() {
                 setKgTotal(e.target.value);
               }}
               placeholder="Ex: 2800"
-              className="w-full border p-2 rounded-md mx-2"
+              className="w-full border p-2 rounded-md"
             />
           </div>
         </div>
@@ -204,6 +249,36 @@ export default function FuelCalculator() {
             <p>
               Litros: <strong>{(kgTotal / density).toFixed(2)}</strong> L
             </p>
+            <p>Confirmar Leitura das Réguas: </p>
+            <div className="flex gap-4 mt-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="regua"
+                  value="LH"
+                  className="accent-blue-600"
+                />
+                LH
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="regua"
+                  value="RH"
+                  className="accent-blue-600"
+                />
+                RH
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="regua"
+                  value="AMBAS"
+                  className="accent-blue-600"
+                />
+                AMBAS
+              </label>
+            </div>
           </div>
           <div className="space-y-3 text-sm border-t md:border-t-0">
             <div className="flex items-center gap-2">
@@ -234,18 +309,26 @@ export default function FuelCalculator() {
           <pre className="whitespace-pre-wrap text-sm mb-2 text-gray-700">
             {refuelNote}
           </pre>
-          <button
-            onClick={copyToClipboard}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Copiar Texto
-          </button>
+        </div>
+        <div className="mt-6">
+          <div className="mt-6">
+            <button
+              onClick={() =>
+                downloadServerPDF({
+                  kgTotal,
+                  fuelToAddKg,
+                  fuelToAddLiters,
+                  temperature: weather?.temperature || 0,
+                  pressure: weather?.pressure || 0,
+                })
+              }
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Gerar PDF (Servidor)
+            </button>
+          </div>
         </div>
       </div>
-      <WeatherInfoPanel
-        temp={weather?.temperature ?? 0}
-        pressure={weather?.pressure ?? 0}
-      />
     </main>
   );
 }
