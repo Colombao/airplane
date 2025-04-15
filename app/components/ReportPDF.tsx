@@ -18,6 +18,8 @@ type ReportPDFProps = {
   data: string;
   base: string;
   prefixo: string;
+  density: number;
+  arrivalLiters: number;
 };
 
 export const ReportPDF = ({
@@ -38,6 +40,8 @@ export const ReportPDF = ({
   data,
   base,
   prefixo,
+  density,
+  arrivalLiters,
 }: ReportPDFProps) => {
   const styles = StyleSheet.create({
     page: {
@@ -89,9 +93,20 @@ export const ReportPDF = ({
           <Text style={styles.line}>
             <Text style={styles.label}>Pressão:</Text> {pressure} hPa
           </Text>
+          <Text style={styles.line}>
+            <Text style={styles.label}>Densidade:</Text> {density}
+          </Text>
         </View>
 
         <View style={styles.section}>
+          <Text style={styles.line}>
+            <Text style={styles.label}>Total de KG Entrada:</Text>{" "}
+            {arrivalLiters} kg
+          </Text>
+          <Text style={styles.line}>
+            <Text style={styles.label}>Total de Litros Entrada:</Text>{" "}
+            {(+arrivalLiters / 0.8).toFixed(2)} L
+          </Text>
           <Text style={styles.line}>
             <Text style={styles.label}>Total de KG:</Text> {kgTotal} kg
           </Text>

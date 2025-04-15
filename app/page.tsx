@@ -5,7 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function FuelCalculator() {
-  const [arrivalLiters, setArrivalLiters] = useState("");
+  const [arrivalLiters, setArrivalLiters] = useState(0);
   const [departureLiters, setDepartureLiters] = useState("");
   const [kgLeft, setKgLeft] = useState<any>(0);
   const [kgRight, setKgRight] = useState<any>(0);
@@ -19,10 +19,9 @@ export default function FuelCalculator() {
   const [data, setData] = useState("");
   const [base, setBase] = useState("");
   const [prefixo, setPrefixo] = useState("");
+  const [density, setDensity] = useState(0.8);
 
   const [leituraReguas, setLeituraReguas] = useState("");
-
-  const density = 0.8;
 
   const [weather, setWeather] = useState<{
     temperature: number;
@@ -75,7 +74,7 @@ export default function FuelCalculator() {
 
   const calcValues = (kg: number) => {
     const liters = kg / density;
-    const cm = kg !== 0 ? kg / 50 - 7 : 0;
+    const cm = kg !== 0 ? kg / 50 - 6 : 0;
     return { liters: liters.toFixed(2), cm: cm.toFixed(1) };
   };
 
@@ -91,7 +90,7 @@ export default function FuelCalculator() {
     setKgRight(kgTotal / 2);
     setValuesLeft(calcValues(kgTotal / 2));
     setValuesRight(calcValues(kgTotal / 2));
-  }, [kgTotal]);
+  }, [kgTotal, density]);
 
   const downloadServerPDF = async (data: {
     kgTotal: number;
@@ -111,6 +110,8 @@ export default function FuelCalculator() {
     data: string;
     base: string;
     prefixo: string;
+    density: number;
+    arrivalLiters: number;
   }) => {
     const res = await fetch("/api/pdf", {
       method: "POST",
@@ -138,11 +139,19 @@ export default function FuelCalculator() {
           <h2 className="text-xl font-bold mb-4">Cálculo de Reabastecimento</h2>
           <div className="grid grid-cols-1 gap-6">
             <div>
+              <label className="block font-medium mb-1">Densidade:</label>
+              <input
+                type="number"
+                onChange={(e) => setDensity(parseFloat(e.target.value) || 0)}
+                placeholder="Ex: 0.8"
+                className="w-full border p-2 rounded-md"
+              />
+            </div>
+            <div>
               <label className="block font-medium mb-1">Kg na Chegada:</label>
               <input
                 type="number"
-                value={arrivalLiters}
-                onChange={(e) => setArrivalLiters(e.target.value)}
+                onChange={(e) => setArrivalLiters(+e.target.value)}
                 placeholder="Ex: 1800"
                 className="w-full border p-2 rounded-md"
               />
@@ -226,7 +235,7 @@ export default function FuelCalculator() {
               Régua 01: <strong>{valuesLeft.cm}</strong> cm
             </p>
             <div className="flex items-center gap-2 text-sm">
-              <label className="font-medium">Régua 2:</label>
+              <label className="font-medium">Régua 02:</label>
               <input
                 type="text"
                 placeholder="0,0"
@@ -251,7 +260,7 @@ export default function FuelCalculator() {
               Régua 01: <strong>{valuesRight.cm}</strong> cm
             </p>
             <div className="flex items-center gap-2 text-sm">
-              <label className="font-medium">Régua 2:</label>
+              <label className="font-medium">Régua 02:</label>
               <input
                 type="number"
                 placeholder="0,0"
@@ -380,11 +389,13 @@ export default function FuelCalculator() {
                   data,
                   base,
                   prefixo,
+                  density: density,
+                  arrivalLiters: arrivalLiters,
                 })
               }
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
-              Gerar PDF (Servidor)
+              Gerar PDF
             </button>
           </div>
         </div>

@@ -25,6 +25,8 @@ export async function POST(req: Request) {
       fuelToAddLiters={body.fuelToAddLiters}
       temperature={body.temperature}
       pressure={body.pressure}
+      density={body.density}
+      arrivalLiters={body.arrivalLiters}
     />
   );
 
