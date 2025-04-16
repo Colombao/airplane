@@ -20,6 +20,8 @@ export default function FuelCalculator() {
   const [base, setBase] = useState("");
   const [prefixo, setPrefixo] = useState("");
   const [density, setDensity] = useState(0.8);
+  const [fuelToAddLiters, setFuelToAddLiters] = useState(0);
+  const [fuelToAddKg, setFuelToAddKg] = useState(0);
 
   const [leituraReguas, setLeituraReguas] = useState("");
 
@@ -78,10 +80,23 @@ export default function FuelCalculator() {
     return { liters: liters.toFixed(2), cm: cm.toFixed(1) };
   };
 
-  const arrival = parseInput(arrivalLiters);
-  const departure = parseInput(departureLiters);
-  const fuelToAddLiters = (departure - arrival) / density;
-  const fuelToAddKg = calcKg(fuelToAddLiters);
+  useEffect(() => {
+    if (density != 0) {
+      const arrival = parseInput(arrivalLiters);
+      const departure = parseInput(departureLiters);
+
+      if (departure > arrival) {
+        const liters = (departure - arrival) / density;
+        const kg = calcKg(liters);
+
+        setFuelToAddLiters(liters);
+        setFuelToAddKg(kg);
+      } else {
+        setFuelToAddLiters(0);
+        setFuelToAddKg(0);
+      }
+    }
+  }, [arrivalLiters, departureLiters, density]);
 
   const refuelNote = `PERFORMED MANUAL REFUELING IAW AMM\nMP ATR-A-12-11-28-00001-211C-A CHECK OF FUEL LEVEL USING MANUAL\nINDICATORS IAW AM MP ATR- A-12-11-28-00001-310A-A AND FUNCTIONAL\nTEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV 10 jan-01-2025 MANUAL CHECK IN NORMAL INDICATION, TEST OK`;
 
@@ -176,17 +191,11 @@ export default function FuelCalculator() {
               <p className="font-semibold text-lg">Resultado</p>
               <p>
                 Litros a Abastecer:{" "}
-                <strong>
-                  {departure && arrival && fuelToAddLiters.toFixed(2)}
-                </strong>{" "}
-                L
+                <strong>{fuelToAddLiters.toFixed(2)}</strong> L
               </p>
               <p>
                 Quilogramas a Abastecer:{" "}
-                <strong>
-                  {departure && arrival && fuelToAddKg.toFixed(2)}
-                </strong>{" "}
-                kg
+                <strong>{fuelToAddKg.toFixed(2)}</strong> kg
               </p>
             </div>
             <div className="mt-2 pt-4">
