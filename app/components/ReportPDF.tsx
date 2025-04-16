@@ -100,13 +100,13 @@ export const ReportPDF = ({
 
         <View style={styles.section}>
           <Text style={styles.line}>
-            <Text style={styles.label}>Total de KG Entrada:</Text>{" "}
+            <Text style={styles.label}>Total de KG Chegada:</Text>{" "}
             {arrivalLiters} kg
           </Text>
-          <Text style={styles.line}>
+          {/* <Text style={styles.line}>
             <Text style={styles.label}>Total de Litros Entrada:</Text>{" "}
             {(+arrivalLiters / 0.8).toFixed(2)} L
-          </Text>
+          </Text> */}
           <Text style={styles.line}>
             <Text style={styles.label}>Total de KG:</Text> {kgTotal} kg
           </Text>
@@ -119,7 +119,8 @@ export const ReportPDF = ({
         <View style={styles.section}>
           <Text style={styles.line}>
             <Text style={styles.label}>Abastecimento necessário:</Text>{" "}
-            {fuelToAddKg.toFixed(2)} kg / {fuelToAddLiters.toFixed(2)} L
+            {+kgTotal - +arrivalLiters} kg /{" "}
+            {+kgTotal / 0.8 - +arrivalLiters / 0.8} L
           </Text>
         </View>
 
