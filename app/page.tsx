@@ -5,6 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function FuelCalculator() {
+  const [showRegua, setShowRegua] = useState(false);
   const [arrivalLiters, setArrivalLiters] = useState(0);
   const [departureLiters, setDepartureLiters] = useState("");
   const [kgLeft, setKgLeft] = useState<any>(0);
@@ -72,7 +73,7 @@ export default function FuelCalculator() {
   const parseInput = (val: any) =>
     typeof val === "string" ? parseFloat(val.replace(",", ".")) || 0 : 0;
 
-  const calcKg = (liters: number) => liters * density;
+  const calcKg = (liters: number) => liters / density;
 
   const calcValues = (kg: number) => {
     const liters = kg / density;
@@ -86,7 +87,7 @@ export default function FuelCalculator() {
       const departure = parseInput(departureLiters);
 
       if (departure > arrival) {
-        const liters = (departure - arrival) / density;
+        const liters = (departure - arrival) * density;
         const kg = calcKg(liters);
 
         setFuelToAddLiters(liters);
@@ -166,7 +167,7 @@ export default function FuelCalculator() {
               <label className="block font-medium mb-1">Kg na Chegada:</label>
               <input
                 type="number"
-                onChange={(e) => setArrivalLiters(+e.target.value)}
+                onChange={(e: any) => setArrivalLiters(e.target.value)}
                 placeholder="Ex: 1800"
                 className="w-full border p-2 rounded-md"
               />
@@ -406,8 +407,31 @@ export default function FuelCalculator() {
             >
               Gerar PDF
             </button>
+            <button
+              onClick={() => setShowRegua(true)} // Exibe a régua ao clicar
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              Visualizar Régua
+            </button>
           </div>
         </div>
+        {showRegua && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-">
+            <div className="relative">
+              <img
+                src="/regua.jpg"
+                alt="Régua"
+                className="max-w-full max-h-full"
+              />
+              <button
+                onClick={() => setShowRegua(false)} // Fecha o modal
+                className="absolute top-4 right-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

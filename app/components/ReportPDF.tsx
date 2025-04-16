@@ -112,7 +112,7 @@ export const ReportPDF = ({
           </Text>
           <Text style={styles.line}>
             <Text style={styles.label}>Total de Litros:</Text>{" "}
-            {(kgTotal / 0.8).toFixed(2)} L
+            {(kgTotal / density).toFixed(2)} L
           </Text>
         </View>
 
@@ -120,7 +120,7 @@ export const ReportPDF = ({
           <Text style={styles.line}>
             <Text style={styles.label}>Abastecimento necessário:</Text>{" "}
             {+kgTotal - +arrivalLiters} kg /{" "}
-            {+kgTotal / 0.8 - +arrivalLiters / 0.8} L
+            {((+kgTotal - +arrivalLiters) * density).toFixed(2)} L
           </Text>
         </View>
 
