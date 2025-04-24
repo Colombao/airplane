@@ -87,7 +87,7 @@ export default function FuelCalculator() {
       const departure = parseInput(departureLiters);
 
       if (departure > arrival) {
-        const liters = (departure - arrival) * density;
+        const liters = (departure - arrival) / density;
         const kg = calcKg(liters);
 
         setFuelToAddLiters(liters);
