@@ -99,7 +99,19 @@ export default function FuelCalculator() {
     }
   }, [arrivalLiters, departureLiters, density]);
 
-  const refuelNote = `PERFORMED MANUAL REFUELING IAW AMM\nMP ATR-A-12-11-28-00001-211C-A CHECK OF FUEL LEVEL USING MANUAL\nINDICATORS IAW AM MP ATR- A-12-11-28-00001-310A-A AND FUNCTIONAL\nTEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV 10 jan-01-2025 MANUAL CHECK IN NORMAL INDICATION, TEST OK`;
+  const [refuelNoteDate, setRefuelNoteDate] = useState("JAN-01-2025");
+
+  const [day, setDay] = useState("01");
+  const [month, setMonth] = useState("JAN");
+  const [year, setYear] = useState("2025");
+  useEffect(() => {
+    setRefuelNoteDate(`${month}-${day}-${year}`);
+  }, [day, month, year]);
+
+  const refuelNote = `PERFORMED MANUAL REFUELING IAW AMM
+  MP ATR-A-12-11-28-00001-211C-A CHECK OF FUEL LEVEL USING MANUAL
+  INDICATORS IAW AM MP ATR- A-12-11-28-00001-310A-A AND FUNCTIONAL
+  TEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV ${refuelNoteDate} MANUAL CHECK IN NORMAL INDICATION, TEST OK`;
 
   useEffect(() => {
     setKgLeft(kgTotal / 2);
@@ -374,7 +386,57 @@ export default function FuelCalculator() {
         <div className="mt-8 p-4 border rounded-md bg-gray-50">
           <h3 className="font-semibold mb-2">Texto Padrão</h3>
           <pre className="whitespace-pre-wrap text-sm mb-2 text-gray-700">
-            {refuelNote}
+            {`PERFORMED MANUAL REFUELING IAW AMM
+MP ATR-A-12-11-28-00001-211C-A CHECK OF FUEL LEVEL USING MANUAL
+INDICATORS IAW AM MP ATR- A-12-11-28-00001-310A-A AND FUNCTIONAL
+TEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV 10 `}
+            <div className="inline-flex items-center space-x-1">
+              <select
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+                className="px-1 border-b border-gray-400 bg-transparent text-gray-700"
+              >
+                {[
+                  "JAN",
+                  "FEV",
+                  "MAR",
+                  "ABR",
+                  "MAI",
+                  "JUN",
+                  "JUL",
+                  "AGO",
+                  "SET",
+                  "OUT",
+                  "NOV",
+                  "DEZ",
+                ].map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min="1"
+                max="31"
+                value={day}
+                onChange={(e) => setDay(e.target.value)}
+                className="w-12 px-1 border-b border-gray-400 bg-transparent text-gray-700"
+                placeholder="Dia"
+              />
+
+              <input
+                type="number"
+                min="1900"
+                max="2100"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="w-16 px-1 border-b border-gray-400 bg-transparent text-gray-700"
+                placeholder="Ano"
+              />
+            </div>
+
+            {` MANUAL CHECK IN NORMAL INDICATION, TEST OK`}
           </pre>
         </div>
         <div className="mt-6">
