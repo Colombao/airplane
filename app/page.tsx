@@ -104,6 +104,7 @@ export default function FuelCalculator() {
   const [day, setDay] = useState("01");
   const [month, setMonth] = useState("JAN");
   const [year, setYear] = useState("2025");
+  const [revNumber, setRevNumber] = useState("10");
   useEffect(() => {
     setRefuelNoteDate(`${month}-${day}-${year}`);
   }, [day, month, year]);
@@ -111,7 +112,7 @@ export default function FuelCalculator() {
   const refuelNote = `PERFORMED MANUAL REFUELING IAW AMM
   MP ATR-A-12-11-28-00001-211C-A CHECK OF FUEL LEVEL USING MANUAL
   INDICATORS IAW AM MP ATR- A-12-11-28-00001-310A-A AND FUNCTIONAL
-  TEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV ${refuelNoteDate} MANUAL CHECK IN NORMAL INDICATION, TEST OK`;
+  TEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV ${revNumber} ${refuelNoteDate} MANUAL CHECK IN NORMAL INDICATION, TEST OK`;
 
   useEffect(() => {
     setKgLeft(kgTotal / 2);
@@ -140,6 +141,7 @@ export default function FuelCalculator() {
     prefixo: string;
     density: number;
     arrivalLiters: number;
+    revNumber: string;
   }) => {
     const res = await fetch("/api/pdf", {
       method: "POST",
@@ -389,7 +391,17 @@ export default function FuelCalculator() {
             {`PERFORMED MANUAL REFUELING IAW AMM
 MP ATR-A-12-11-28-00001-211C-A CHECK OF FUEL LEVEL USING MANUAL
 INDICATORS IAW AM MP ATR- A-12-11-28-00001-310A-A AND FUNCTIONAL
-TEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV 10 `}
+TEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A REV `}
+            <input
+              type="number"
+              min="1"
+              max="99"
+              value={revNumber}
+              onChange={(e) => setRevNumber(e.target.value)}
+                className="w-12 px-1 border-b border-gray-400 bg-transparent text-gray-700"
+                placeholder="10"
+              />
+              {` `}
             <div className="inline-flex items-center space-x-1">
               <select
                 value={month}
@@ -463,6 +475,7 @@ TEST OF FEEDER TANK LOW LEVEL SENSOR IAW AMM MP ATR-A-28-42-70-04001-340A-A -A R
                   prefixo,
                   density: density,
                   arrivalLiters: arrivalLiters,
+                  revNumber: revNumber,
                 })
               }
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"

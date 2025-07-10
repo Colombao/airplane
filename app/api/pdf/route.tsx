@@ -27,6 +27,7 @@ export async function POST(req: Request) {
       pressure={body.pressure}
       density={body.density}
       arrivalLiters={body.arrivalLiters}
+      revNumber={body.revNumber}
     />
   );
 

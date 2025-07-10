@@ -20,6 +20,7 @@ type ReportPDFProps = {
   prefixo: string;
   density: number;
   arrivalLiters: number;
+  revNumber: string;
 };
 
 export const ReportPDF = ({
@@ -42,6 +43,7 @@ export const ReportPDF = ({
   prefixo,
   density,
   arrivalLiters,
+  revNumber,
 }: ReportPDFProps) => {
   const styles = StyleSheet.create({
     page: {
